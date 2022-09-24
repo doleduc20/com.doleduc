@@ -1,0 +1,135 @@
+//jstl
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+
+//khai báo lib
+<%@include file="/common/taglib.jsp" %>
+
+//pom.xlm
+<properties>
+		<jsp.api.version>2.0</jsp.api.version>
+		<jstl.version>1.2</jstl.version>
+		<servlet.api.version>3.1.0</servlet.api.version>
+		<sitemesh.version>2.4.2</sitemesh.version>
+		<mysql.version>8.0.13</mysql.version>
+		<weld.servlet.version>1.1.0.Final</weld.servlet.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${jsp.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>sitemesh</artifactId>
+			<version>${sitemesh.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld.servlet</groupId>
+			<artifactId>weld-servlet</artifactId>
+			<version>${weld.servlet.version}</version>
+		</dependency>
+ </dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+//controller
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		RequestDispatcher rd = request.getRequestDispatcher("/views/web/home.jsp");
+		rd.forward(request, response);
+		
+	}
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		
+	}
+
+//điều hướng đến controller
+<c:redirect url="/trang-chu"/>
+
+//decorators
+<?xml version="1.0" encoding="UTF-8"?>
+
+<decorators defaultdir="/decorators">
+    <!-- Any urls that are excluded will never be decorated by Sitemesh -->
+    <excludes>
+        <pattern>/api.jsp</pattern>
+    </excludes>
+	<!-- apply Sitemesh default template -->
+    <decorator name="admin" page="admin.jsp">
+        <pattern>/admin*</pattern>
+    </decorator>
+   
+    <decorator name="web" page="web.jsp">
+        <pattern>/*</pattern>
+    </decorator>
+
+    </decorators>
+//
+mvn clean install
+
+ các bước:
+-tạo maven project
+-khai báo thư viện pom.xml
+-tạo folder  WEB-INF trong webapp
+-tạo file web.xml trong WEB-INF,welcome file list
+-tạo index.jsp trong webapp,
+-tạo package controller của home và admin  trong src/main/java
+-tạo class home,tạo @WebServlet(urlPatterns = {"/trang-chu"})/@WebServlet(urlPatterns = {"/admin-home"})
+-tạo folder views/home,admin/home.jsp
+-trong index.jsp,redirect đến controller /trang-chu
+-tạo decorators.xml trong WEB-INF,cấu hình decorators
+-tạo /webapp/decorators/admin.jsp,web.jsp(master layout)
+-tạo folder /common/web,admin(chứa những cái chung của page). thêm dữ liệu cho [admin/header.jsp, menu.jsp, footer.jsp] [web/header.jsp, 
+footer.jsp]
+-tạo folder webapp/template/admin, web. Copy thư viện bootstrap,css,jquery,...
+-trong decorators/web.jsp và admin.jsp,  include file taglib.jsp (trong đó có khai báo sitemesh)+ page language
+  + <head>
+    <title><dec:title default="Trang chủ" /></title>
+	<!-- css -->
+	</head>
+     <body>
+	<!-- header -->
+      <%@ include file="/common/web/header.jsp" %>
+       <!-- header -->
+    
+    <div class="container">
+    	<dec:body/>
+    </div>
+
+	<!-- footer -->
+	<%@ include file="/common/web/footer.jsp" %>
+	<!-- footer -->
+     <!-- scripts -->
+
+-trong views/web/home+admin  ,thêm body,include common+page language
+-tạo filter trong web.xml
